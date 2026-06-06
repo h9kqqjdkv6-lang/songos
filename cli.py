@@ -37,8 +37,20 @@ def _default(ctx: typer.Context):
 
     ensure_config_dir()
     config = load_config()
-    db_path = config["db_path"]
 
+    if not config.get("vault_path"):
+        typer.echo(
+            "👋 Welcome to SongOS!\n\n"
+            "First, tell SongOS where your notes are:\n\n"
+            f"  mkdir -p ~/.songos\n"
+            f"  echo 'vault_path: ~/path/to/your/obsidian/vault' > ~/.songos/config.yaml\n\n"
+            "Then run:\n"
+            "  songos ingest   # import your notes\n"
+            "  songos          # get your first insight\n"
+        )
+        return
+
+    db_path = config["db_path"]
     if not os.path.exists(db_path):
         typer.echo(
             "👋 Welcome to SongOS!\n\n"
@@ -53,9 +65,9 @@ def _default(ctx: typer.Context):
         dt = a.decision_trajectories()
         tl = a.tag_lifecycle()
         a.close()
-    except Exception as e:
+    except Exception:
         import logging
-        logging.getLogger("songos").warning(f"Default insight failed: {e}")
+        logging.exception("Analysis error — run 'songos ingest' if this persists")
         typer.echo(
             "⚠️  No data found. Run `songos ingest` first to import your notes.\n"
         )
@@ -141,6 +153,15 @@ def ingest(
     ensure_config_dir()
     config = load_config()
     vp = vault_path or config["vault_path"]
+    if not vp:
+        typer.echo(
+            "❌ No vault path configured.\n\n"
+            "Set it in ~/.songos/config.yaml:\n"
+            "  vault_path: ~/path/to/your/obsidian/vault\n\n"
+            "Or pass it directly:\n"
+            "  songos ingest --vault ~/path/to/your/vault\n"
+        )
+        raise typer.Exit(code=1)
     dp = db_path or config["db_path"]
 
     typer.echo(f"📂 Vault: {vp}")

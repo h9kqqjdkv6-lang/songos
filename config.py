@@ -1,12 +1,13 @@
 """Configuration loader. Reads ~/.songos/config.yaml."""
+import getpass
 import os
 import yaml
 
 DEFAULT_CONFIG = {
-    "vault_path": os.path.expanduser("~/Desktop/obsidian知识库/我的数字花园"),
+    "vault_path": "",
     "db_path": os.path.expanduser("~/.songos/songos.db"),
-    "user_name": "",          # Empty = auto-detect from OS username
-    "output_language": "zh",  # "zh" or "en"
+    "user_name": "",
+    "output_language": "en",
 }
 
 CONFIG_DIR = os.path.expanduser("~/.songos")
@@ -41,4 +42,4 @@ def get_user_name() -> str:
     name = load_config().get("user_name", "")
     if name:
         return name
-    return os.environ.get("USER", os.environ.get("USERNAME", ""))
+    return os.environ.get("USER") or os.environ.get("USERNAME") or getpass.getuser()
