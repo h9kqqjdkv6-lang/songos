@@ -77,17 +77,19 @@ Either way — the code is free.
 ## Quick Start
 
 ```bash
-git clone https://github.com/your-username/songos.git
+git clone https://github.com/h9kqqjdkv6-lang/songos.git
 cd songos
-pip install -r requirements.txt
+pip install -e .
 
 # Point to your Obsidian vault
 mkdir -p ~/.songos
 echo "vault_path: ~/path/to/your/obsidian/vault" > ~/.songos/config.yaml
+# Optional: set your name for personalized reports
+echo "user_name: YourName" >> ~/.songos/config.yaml
 
 # Ingest and analyze
-python cli.py ingest
-python cli.py
+songos ingest
+songos
 ```
 
 ---
@@ -97,6 +99,7 @@ python cli.py
 | Phase | What | Status |
 |-------|------|--------|
 | `songos ingest` | Obsidian → SQLite pipeline | ✅ |
+| `songos profile` | Data inventory — what's in the database | ✅ |
 | `songos decision` | Decision trajectory, execution rate, abandonment signals | ✅ |
 | `songos pattern` | Output rhythm, context switching, idea pipeline, theme lifecycle | ✅ |
 | `songos twin` | Proto Digital Twin — what we know, what's missing | ✅ |

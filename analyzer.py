@@ -170,7 +170,7 @@ class BehaviorAnalyzer:
             "decision_only_days": decision_only,
             "next_day_action_days": next_day,
             "stranded_days": [
-                {"date": nd} for nd, nid in stranded
+                {"date": note_date} for _, note_date in stranded
             ],
             "stranded_count": len(stranded),
             "insight": self._interpret_conversion(

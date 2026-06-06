@@ -5,6 +5,8 @@ import yaml
 DEFAULT_CONFIG = {
     "vault_path": os.path.expanduser("~/Desktop/obsidian知识库/我的数字花园"),
     "db_path": os.path.expanduser("~/.songos/songos.db"),
+    "user_name": "",          # Empty = auto-detect from OS username
+    "output_language": "zh",  # "zh" or "en"
 }
 
 CONFIG_DIR = os.path.expanduser("~/.songos")
@@ -32,3 +34,11 @@ def get_vault_path() -> str:
 
 def get_db_path() -> str:
     return load_config()["db_path"]
+
+
+def get_user_name() -> str:
+    """Return configured user name, fallback to OS username."""
+    name = load_config().get("user_name", "")
+    if name:
+        return name
+    return os.environ.get("USER", os.environ.get("USERNAME", ""))

@@ -1,17 +1,17 @@
 """Vault scanner — walk .md files, parse, write to SQLite."""
 import os
-import json
+
 import logging
 from pathlib import Path
 
-from parser import parse_file
+from md_parser import parse_file
 from db import (get_connection, init_db, compute_file_hash, note_id_from_path,
                 upsert_note, insert_section, insert_link, upsert_tag,
                 link_note_tag, get_db_hashes, delete_notes_by_ids, query_stats)
 
 logger = logging.getLogger(__name__)
 
-SKIP_DIRS = {".obsidian", ".git", ".trash", ".claude"}
+
 
 
 def get_dirty_files(vault: Path, db_hashes: dict[str, str]) -> tuple[list[Path], list[str]]:
@@ -105,10 +105,9 @@ def run(vault_path: str, db_path: str) -> dict:
 
     # Stats
     stats = query_stats(conn)
-    total_files = len(set(list(vault.rglob("*.md"))))
     stats["files_ingested"] = ingested
     stats["files_skipped"] = skipped
-    stats["files_unchanged"] = total_files - ingested - skipped
+    stats["files_unchanged"] = len(db_hashes) - len(to_delete)
     stats["files_deleted"] = len(to_delete)
 
     logger.info(f"✅ Ingest complete: {ingested} new/updated, "

@@ -3,6 +3,7 @@
 Commands:
     songos              → One insight you don't know about yourself
     songos ingest       → Activate historical data (Obsidian → SQLite)
+    songos profile      → Data inventory
     songos decision     → Decision Analytics (how you make decisions)
     songos pattern      → Behavioral Patterns (what you habitually do)
     songos twin         → Proto Digital Twin (what we know, what's missing)
@@ -10,7 +11,7 @@ Commands:
 import os
 import typer
 
-from config import load_config, ensure_config_dir
+from config import load_config, ensure_config_dir, get_user_name
 from ingest import run as ingest_run
 from analyzer import BehaviorAnalyzer
 from reporter import (
@@ -52,7 +53,9 @@ def _default(ctx: typer.Context):
         dt = a.decision_trajectories()
         tl = a.tag_lifecycle()
         a.close()
-    except Exception:
+    except Exception as e:
+        import logging
+        logging.getLogger("songos").warning(f"Default insight failed: {e}")
         typer.echo(
             "⚠️  No data found. Run `songos ingest` first to import your notes.\n"
         )
@@ -70,9 +73,10 @@ def _default(ctx: typer.Context):
     active = tl.get("emerging", [])
     fading = tl.get("fading", [])
 
+    user = get_user_name() or "Friend"
     lines = [
         "",
-        f"Song, {b['daily_notes']} days of journaling:",
+        f"{user}, {b['daily_notes']} days of journaling:",
         "",
     ]
 
