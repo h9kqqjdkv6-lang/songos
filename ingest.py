@@ -104,10 +104,14 @@ def run(vault_path: str, db_path: str) -> dict:
     conn.commit()
 
     # Stats
+    # modified = files in to_ingest that already existed in DB (updates, not new)
+    modified_count = sum(
+        1 for fp in to_ingest if str(fp.relative_to(vault)) in db_hashes
+    )
     stats = query_stats(conn)
     stats["files_ingested"] = ingested
     stats["files_skipped"] = skipped
-    stats["files_unchanged"] = len(db_hashes) - len(to_delete)
+    stats["files_unchanged"] = len(db_hashes) - len(to_delete) - modified_count
     stats["files_deleted"] = len(to_delete)
 
     logger.info(f"✅ Ingest complete: {ingested} new/updated, "
