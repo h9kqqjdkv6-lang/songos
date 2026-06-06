@@ -122,11 +122,29 @@ Signal → 结果如何（播放量/转化率/收入/反馈）
 
 | 状态 | 产出 |
 |------|------|
-| ✅ README | 定位从"建数据库"重构为"行为分析引擎" |
-| ✅ Schema | 6 表 + 9 索引 + CASCADE，已通过 test_schema.py 验证 |
-| ✅ Parser Spec | PARSER_SPEC.md，14 节覆盖全部 Obsidian 语法 |
-| ✅ Phase 0: `ingest` | config → db → parser → ingest → cli → reporter 全链路跑通，996 笔记成功入库 |
-| ✅ Phase 1: `analyze` | analyzer.py 6 维度行为分析 + Song Behavioral Report v1，已通过真实验证 |
+| ✅ Phase 0: `ingest` | config → db → md_parser → ingest → cli → reporter 全链路跑通 |
+| ✅ Phase 1: `analyze` | analyzer.py 6 维度 + decision trajectory + 3 CLI 命令 |
+| ✅ v0.1.1 | review 修复：user_name 配置、pyproject.toml、parser 改名、bug 修复 |
+| ✅ v0.1.2 | files_unchanged 公式修复（排除已修改文件） |
+| ✅ 开源 | GitHub 仓库就绪，README 面向公共 |
+
+### 仓库结构
+
+```
+songos/
+├── cli.py              ← 入口：songos（无参数=一句话洞察）
+├── ingest.py           ← Obsidian → SQLite
+├── md_parser.py        ← Markdown 解析器（避免遮蔽 builtin parser）
+├── analyzer.py         ← 行为分析引擎
+├── reporter.py         ← 报告生成器
+├── db.py               ← SQLite 操作
+├── config.py           ← 配置管理（user_name / output_language）
+├── pyproject.toml      ← pip install -e . → songos 命令可用
+├── test_schema.py      ← Schema 验证
+├── examples/           ← demo_report.md
+├── docs/               ← roadmap.md
+├── README.md / LICENSE / .gitignore
+```
 
 ---
 
